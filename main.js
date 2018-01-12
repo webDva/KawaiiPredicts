@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 
+import SimpleLinearRegression from 'ml-regression-simple-linear';
+
 /*
  * API Server
  */
@@ -19,9 +21,29 @@ app.set('port', port);
  * API Server
  */
 
-// compute linear regression line
+// compute linear regression line.
+// :datapoints must be in format of data = [{x: 5, y:3}, {x: 10, y:17}, {x: 15, y:4}, {x: 20, y:6}]
 app.get('/regression/:datapoints', (req, res) => {
     const dataPoints = req.params.datapoints;
+    let xValues = [], yValues = [];
+
+    const numberOfDataPoints = dataPoints.lenth;
+
+    for (let i = 0; i < numberOfDataPoints; i++) {
+        xValues.push(dataPoints[i].x);
+        yValues.push(dataPoints[i].y);
+    }
+
+    const regression = new SimpleLinearRegression(xValues, yValues);
+
+    const result = {
+        slope: regression.slope,
+        y_intercept: regression.intercept,
+        model: regression.toString(),
+        numberOfDataPoints: dataPoints.length
+    };
+
+    res.send(result);
 });
 
 /*
