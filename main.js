@@ -51,7 +51,7 @@ app.get('/regression/:datapoints', (req, res) => {
     if (req.params.datapoints.split('_').map(Number).some(isNaN)) {
         return res.send({error: "send a valid data set like '1_8_2_8_3_8_4_3_5_2_6_-2_7_-3_8_-4' baka"});
     } else if (req.params.datapoints.split('_').map(Number).length % 2 == 1) { // checking to see if it's an odd number of data points
-        return res.send({error: 'send a data set with an even number of data points, baka'});
+        return res.send({error: 'send a data set with an even number of numbers, baka'});
     } else if (req.params.datapoints.split('_').map(Number).length === 2) {
         return res.send({error: 'send a data set with more than one data point, baka'});
     }
