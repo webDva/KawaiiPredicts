@@ -2,6 +2,16 @@
     "name": "KawaiiPredicts",
     "version": "0.0.1",
     "author": "webdva",
+    "main": "main.js",
+    "scripts": {
+        "start": "node main.js",
+        "start debug": "node --inspect --debug-brk main.js",
+        "start debug no break": "node --inspect main.js"
+    },
+    "engines": {
+        "node": "6.9.4",
+        "npm": "5.6.0"
+    },    
     "dependencies": {
         "ml-regression-simple-linear": "^1.0.2"
     }
