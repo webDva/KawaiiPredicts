@@ -1,8 +1,8 @@
 {
     "name": "KawaiiPredicts",
-    "version": "1.0.0",
-    "keywords": ["util", "functional", "server", "client", "browser"],
-    "author": "jeast",
-    "contributors": [],
-    "dependencies": {}
+    "version": "0.0.1",
+    "author": "webdva",
+    "dependencies": {
+        "ml-regression-simple-linear": "^1.0.2"
+    }
 }
