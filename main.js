@@ -44,20 +44,20 @@ app.set('port', port);
  */
 
 // compute linear regression line.
-// :datapoints must be in format of 5-3-10-17-15-4-20-6 which would translate to [[5, 3], [10, 17], [15, 4], [20, 6]]
+// :datapoints must be in format of 5_3_10_17_15_4_20_6 which would translate to [[5, 3], [10, 17], [15, 4], [20, 6]]
 app.get('/regression/:datapoints', (req, res) => {
 
     // check to see if it's a valid data set first
-    if (req.params.datapoints.split('-').map(Number).some(isNaN)) {
-        return res.send({error: "send a valid data set like '5-3-10-17-15-4-20-6' baka"});
-    } else if (req.params.datapoints.split('-').map(Number).length % 2 == 1) { // checking to see if it's an odd number of data points
+    if (req.params.datapoints.split('_').map(Number).some(isNaN)) {
+        return res.send({error: "send a valid data set like '1_8_2_8_3_8_4_3_5_2_6_-2_7_-3_8_-4' baka"});
+    } else if (req.params.datapoints.split('_').map(Number).length % 2 == 1) { // checking to see if it's an odd number of data points
         return res.send({error: 'send a data set with an even number of data points, baka'});
-    } else if (req.params.datapoints.split('-').map(Number).length === 2) {
+    } else if (req.params.datapoints.split('_').map(Number).length === 2) {
         return res.send({error: 'send a data set with more than one data point, baka'});
     }
 
     // decode data points from the arbitrary encoding design into an array of numbers
-    const dataPoints = req.params.datapoints.split('-').map(Number);
+    const dataPoints = req.params.datapoints.split('_').map(Number);
     let xValues = [], yValues = [];
 
     const numberOfDataPoints = dataPoints.length / 2;
