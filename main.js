@@ -62,12 +62,12 @@ app.get('/regression/:datapoints', (req, res) => {
 
     const numberOfDataPoints = dataPoints.length / 2;
 
-    for (let i = 0; i < numberOfDataPoints; i++) {
-        // if it's odd, add it to the set of x values
-        if (Math.abs(i % 2 == 1))
+    for (let i = 0; i < dataPoints.length; i++) {
+        // if it's even, add it to the set of x values
+        if (i % 2 == 0)
             xValues.push(dataPoints[i]);
-        // else it's even so add it to the set of y values
-        else if (i % 2 == 0)
+        // else it's odd so add it to the set of y values
+        else if (Math.abs(i % 2 == 1))
             yValues.push(dataPoints[i]);
     }
 
@@ -77,7 +77,8 @@ app.get('/regression/:datapoints', (req, res) => {
         slope: regression.slope,
         y_intercept: regression.intercept,
         model: regression.toString(),
-        numberOfDataPoints: numberOfDataPoints
+        numberOfDataPoints: numberOfDataPoints,
+        dataPairs: [xValues, yValues]
     };
 
     return res.send(result);
