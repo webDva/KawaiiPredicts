@@ -2,14 +2,13 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 
-import SimpleLinearRegression from 'ml-regression-simple-linear';
+const SimpleLinearRegression = require('ml-regression-simple-linear');
 
 /*
  * API Server
  */
 
 const app = express();
-app.use(cors()); // Needed for file sharing.
 // Needed for POST requests.
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -22,16 +21,31 @@ app.set('port', port);
  */
 
 // compute linear regression line.
-// :datapoints must be in format of data = [{x: 5, y:3}, {x: 10, y:17}, {x: 15, y:4}, {x: 20, y:6}]
+// :datapoints must be in format of 5-3-10-17-15-4-20-6 which would translate to [[5, 3], [10, 17], [15, 4], [20, 6]]
 app.get('/regression/:datapoints', (req, res) => {
-    const dataPoints = req.params.datapoints;
+
+    // check to see if it's a valid data set first
+    if (req.params.datapoints.split('-').map(Number).some(isNaN)) {
+        return res.send({error: "send a valid data set like '5-3-10-17-15-4-20-6' baka"});
+    } else if (req.params.datapoints.split('-').map(Number).length % 2 == 1) { // checking to see if it's an odd number of data points
+        return res.send({error: 'send a data set with an even number of data points, baka'});
+    } else if (req.params.datapoints.split('-').map(Number).length === 2) {
+        return res.send({error: 'send a data set with more than one data point, baka'});
+    }
+
+    // decode data points from the arbitrary encoding design into an array of numbers
+    const dataPoints = req.params.datapoints.split('-').map(Number);
     let xValues = [], yValues = [];
 
-    const numberOfDataPoints = dataPoints.lenth;
+    const numberOfDataPoints = dataPoints.length / 2;
 
     for (let i = 0; i < numberOfDataPoints; i++) {
-        xValues.push(dataPoints[i].x);
-        yValues.push(dataPoints[i].y);
+        // if it's odd, add it to the set of x values
+        if (Math.abs(i % 2 == 1))
+            xValues.push(dataPoints[i]);
+        // else it's even so add it to the set of y values
+        else if (i % 2 == 0)
+            yValues.push(dataPoints[i]);
     }
 
     const regression = new SimpleLinearRegression(xValues, yValues);
@@ -40,10 +54,10 @@ app.get('/regression/:datapoints', (req, res) => {
         slope: regression.slope,
         y_intercept: regression.intercept,
         model: regression.toString(),
-        numberOfDataPoints: dataPoints.length
+        numberOfDataPoints: numberOfDataPoints
     };
 
-    res.send(result);
+    return res.send(result);
 });
 
 /*
