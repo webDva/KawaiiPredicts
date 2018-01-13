@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 // i tried with the below license for the ml-regression-simple-linear node module
 
@@ -31,8 +32,9 @@ const SimpleLinearRegression = require('ml-regression-simple-linear');
  * API Server
  */
 
+// setup backend
 const app = express();
-// Needed for POST requests.
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -45,6 +47,7 @@ app.set('port', port);
 
 // compute linear regression line.
 // :datapoints must be in format of 5_3_10_17_15_4_20_6 which would translate to [[5, 3], [10, 17], [15, 4], [20, 6]]
+// might have to move this into the request body later on for large datasets--or create a new API endpoint for such cases
 app.get('/regression/:datapoints', (req, res) => {
 
     // decode data points from the arbitrary encoding design into an array of numbers
