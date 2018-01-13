@@ -47,21 +47,20 @@ app.set('port', port);
 // :datapoints must be in format of 5_3_10_17_15_4_20_6 which would translate to [[5, 3], [10, 17], [15, 4], [20, 6]]
 app.get('/regression/:datapoints', (req, res) => {
 
+    // decode data points from the arbitrary encoding design into an array of numbers
+    const dataPoints = req.params.datapoints.split('_').map(Number);
+
     // check to see if it's a valid data set first
-    if (req.params.datapoints.split('_').map(Number).some(isNaN)) {
+    if (dataPoints.some(isNaN)) {
         return res.send({error: "send a valid data set like '1_8_2_8_3_8_4_3_5_2_6_-2_7_-3_8_-4' baka"});
-    } else if (req.params.datapoints.split('_').map(Number).length % 2 == 1) { // checking to see if it's an odd number of data points
+    } else if (dataPoints.length % 2 == 1) { // checking to see if it's an odd number of data points
         return res.send({error: 'send a data set with an even number of numbers, baka'});
-    } else if (req.params.datapoints.split('_').map(Number).length === 2) {
+    } else if (dataPoints.length === 2) {
         return res.send({error: 'send a data set with more than one data point, baka'});
     }
 
-    // decode data points from the arbitrary encoding design into an array of numbers
-    const dataPoints = req.params.datapoints.split('_').map(Number);
+    // sort x and y pairs into seperate arrays
     let xValues = [], yValues = [];
-
-    const numberOfDataPoints = dataPoints.length / 2;
-
     for (let i = 0; i < dataPoints.length; i++) {
         // if it's even, add it to the set of x values
         if (i % 2 == 0)
@@ -71,17 +70,17 @@ app.get('/regression/:datapoints', (req, res) => {
             yValues.push(dataPoints[i]);
     }
 
+    // perform linear regression on the user's dataset
     const regression = new SimpleLinearRegression(xValues, yValues);
 
-    const result = {
+    // send the results to the user on success
+    return res.send({
         slope: regression.slope,
         y_intercept: regression.intercept,
         model: regression.toString(),
-        numberOfDataPoints: numberOfDataPoints,
+        numberOfDataPoints: dataPoints.length / 2,
         dataPairs: [xValues, yValues]
-    };
-
-    return res.send(result);
+    });
 });
 
 /*
