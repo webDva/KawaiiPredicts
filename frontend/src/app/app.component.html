@@ -1,12 +1,13 @@
 <table>
     <tr (click)="generateData()">
+        <th></th>
         <th>X</th>
         <th>Y</th>
     </tr>
     <tr *ngFor="let d of dataPairs; let i = index;">
         <td>{{i + 1}}</td>
-        <td><input type="number"/>{{d[0]}}</td>
-        <td><input type="number"/>{{d[1]}}</td>
+        <td><input type="number" value="{{d[0]}}"/></td>
+        <td><input type="number" value="{{d[1]}}"/></td>
     </tr>
 </table>
 <h1 (click)="getRegression(dset)">
