@@ -46,31 +46,25 @@ app.set('port', port);
  */
 
 // compute linear regression line.
-// :datapoints must be in format of 5_3_10_17_15_4_20_6 which would translate to [[5, 3], [10, 17], [15, 4], [20, 6]]
-// might have to move this into the request body later on for large datasets--or create a new API endpoint for such cases
-app.get('/regression/:datapoints', (req, res) => {
-
-    // decode data points from the arbitrary encoding design into an array of numbers
-    const dataPoints = req.params.datapoints.split('_').map(Number);
+// :datapoints must be in format of {"dataset": [[5, 3], [10, 17], [15, 4], [20, 6]]}
+app.post('/regression', (req, res) => {
 
     // check to see if it's a valid data set first
-    if (dataPoints.some(isNaN)) {
-        return res.send({error: "send a valid data set like '1_8_2_8_3_8_4_3_5_2_6_-2_7_-3_8_-4' baka"});
-    } else if (dataPoints.length % 2 == 1) { // checking to see if it's an odd number of data points
-        return res.send({error: 'send a data set with an even number of numbers, baka'});
-    } else if (dataPoints.length === 2) {
+    const dataPoints = req.body.dataset;
+
+    for (let i = 0; i < dataPoints.length; i++) {
+        if (dataPoints[i].some(isNaN))
+            return res.send({error: "send a valid data set like {'dataset': [[5, 3], [10, 17], [15, 4], [20, 6]]} baka"});
+    }
+    if (dataPoints.length < 2) {
         return res.send({error: 'send a data set with more than one data point, baka'});
     }
 
     // sort x and y pairs into seperate arrays
     let xValues = [], yValues = [];
     for (let i = 0; i < dataPoints.length; i++) {
-        // if it's even, add it to the set of x values
-        if (i % 2 == 0)
-            xValues.push(dataPoints[i]);
-        // else it's odd so add it to the set of y values
-        else if (Math.abs(i % 2 == 1))
-            yValues.push(dataPoints[i]);
+        xValues.push(dataPoints[i][0]);
+        yValues.push(dataPoints[i][1]);
     }
 
     // perform linear regression on the user's dataset
@@ -81,8 +75,10 @@ app.get('/regression/:datapoints', (req, res) => {
         slope: regression.slope,
         y_intercept: regression.intercept,
         model: regression.toString(),
-        numberOfDataPoints: dataPoints.length / 2,
-        dataPairs: [xValues, yValues]
+        numberOfDataPoints: dataPoints.length,
+        xValues: xValues,
+        yValues: yValues,
+        dataPairs: dataPoints
     });
 });
 
