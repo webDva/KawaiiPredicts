@@ -13,14 +13,14 @@ export class AppComponent implements OnInit {
 
     baseUrl = '';
 
-    dset = '1_8_2_8_3_8_4_3_5_2_6_-2_7_-3_8_-4';
+    //dset = {"dataset": [[5, 3], [10, 17], [15, 4], [20, 6]]};
     results = {};
 
     numPairs = 1;
     dataPairs = [[1, 2], [3, 4]];
 
-    getRegression(dataset: string) {
-        this.http.get(this.baseUrl + '/regression/' + dataset).subscribe(data => {
+    getRegression(dataset: Array<number[][]>) {
+        this.http.post(this.baseUrl + '/regression', {"dataset": dataset}).subscribe(data => {
             this.results = data;
         },
             err => {
