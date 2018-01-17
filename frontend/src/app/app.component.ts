@@ -17,9 +17,12 @@ export class AppComponent implements OnInit {
     results = {};
 
     numPairs = 1;
-    dataPairs = [[1, 2], [3, 4]];
+    dataPairs: Array<number[]>;
 
-    getRegression(dataset: Array<number[][]>) {
+    getRegression(dataset: Array<number[]>) {
+        for (let i = 0; i < dataset.length; i++) {
+            dataset[i] = dataset[i].map(Number); // string to number
+        }
         this.http.post(this.baseUrl + '/regression', {"dataset": dataset}).subscribe(data => {
             this.results = data;
         },
