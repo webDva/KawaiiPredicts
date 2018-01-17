@@ -67,22 +67,22 @@ export class AppComponent implements OnInit {
 
         let x = d3.scaleLinear()
             .domain([-100, 100])
-            .range([0, width]);
+            .range([margin.left, width + margin.left]);
 
         let y = d3.scaleLinear()
             .domain([-100, 100])
-            .range([height, 0]);
+            .range([height + margin.right, margin.top]);
 
         // add the x Axis
         svg.append("g")
             .attr('class', 'x axis')
-            .attr('transform', `translate(${margin.left}, ${margin.top + height})`)
+            .attr('transform', `translate(${0}, ${margin.top + height})`)
             .call(d3.axisBottom(x));
 
         // add the y Axis
         svg.append("g")
             .attr('class', 'y axis')
-            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            .attr('transform', `translate(${margin.left}, ${0})`)
             .call(d3.axisLeft(y));
 
         svg.selectAll("circle")
