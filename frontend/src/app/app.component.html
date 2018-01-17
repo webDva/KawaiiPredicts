@@ -6,12 +6,10 @@
     </tr>
     <tr *ngFor="let d of dataPairs; let i = index;">
         <td>{{i + 1}}</td>
-        <td><input #number1 type="number" (input)="dataPairs[i][0] = number1.value" [value]="dataPairs[i][0]"/></td>
-        <td><input #number2 type="number" (input)="dataPairs[i][1] = number2.value" [value]="dataPairs[i][1]"/></td>
+        <td><input #number1 type="number" (input)="dataPairs[i][0] = number1.value; chart();" [value]="dataPairs[i][0]"/></td>
+        <td><input #number2 type="number" (input)="dataPairs[i][1] = number2.value; chart();" [value]="dataPairs[i][1]"/></td>
     </tr>
 </table>
 <button (click)="generateData()">generate data</button>
 <button (click)="getRegression(dataPairs)">regression</button>
-<h1>
-  {{results | json}}
-</h1>
+<svg class="d3-chart"></svg>

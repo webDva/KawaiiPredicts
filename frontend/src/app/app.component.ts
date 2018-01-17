@@ -1,11 +1,14 @@
 // ng build --prod --aot=false
 
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewEncapsulation} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
 
+import * as d3 from 'd3';
+
 @Component({
     selector: 'app-root',
+    encapsulation: ViewEncapsulation.None,
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
@@ -25,6 +28,7 @@ export class AppComponent implements OnInit {
         }
         this.http.post(this.baseUrl + '/regression', {"dataset": dataset}).subscribe(data => {
             this.results = data;
+            this.chart();
         },
             err => {
 
@@ -48,7 +52,49 @@ export class AppComponent implements OnInit {
         }
     }
 
-    constructor(private http: HttpClient) {}
+    chart() {
+        let margin = {top: 20, right: 15, bottom: 20, left: 60};
+        let width = 500 - margin.left - margin.right;
+        let height = 500 - margin.top - margin.bottom;
+
+
+        let svg = d3.select('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .style('background-color', '#efefef');
+
+        svg.selectAll('*').remove();
+
+        let x = d3.scaleLinear()
+            .domain([-100, 100])
+            .range([0, width]);
+
+        let y = d3.scaleLinear()
+            .domain([-100, 100])
+            .range([height, 0]);
+
+        // add the x Axis
+        svg.append("g")
+            .attr('class', 'x axis')
+            .attr('transform', `translate(${margin.left}, ${margin.top + height})`)
+            .call(d3.axisBottom(x));
+
+        // add the y Axis
+        svg.append("g")
+            .attr('class', 'y axis')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            .call(d3.axisLeft(y));
+
+        svg.selectAll("circle")
+            .data(this.dataPairs)
+            .enter().append("circle")
+            .attr("cx", function (d) {return x(d[0]);})
+            .attr("cy", function (d) {return y(d[1]);})
+            .attr("r", "8px")
+            .attr("fill", "red");
+    }
+
+    constructor(private http: HttpClient, private element: ElementRef) {}
 
     ngOnInit() {
         if (!environment.production) {
