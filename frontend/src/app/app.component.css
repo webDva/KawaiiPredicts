@@ -27,9 +27,25 @@ table input {
   border-style: none;
 }
 
+.row {
+    float: left;
+}
+
+.row:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.buttons-container {
+    position: relative;
+    display: block;
+    clear: both;
+}
+
 .d3-chart {
-  width: 100%;
-  height: 100%;
+  width: 400px;
+  height: 400px;
 }
  
 .d3-chart .axis path,

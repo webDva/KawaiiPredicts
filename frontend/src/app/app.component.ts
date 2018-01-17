@@ -54,8 +54,8 @@ export class AppComponent implements OnInit {
 
     chart() {
         let margin = {top: 20, right: 15, bottom: 20, left: 60};
-        let width = 500 - margin.left - margin.right;
-        let height = 500 - margin.top - margin.bottom;
+        let width = 340 - margin.left - margin.right;
+        let height = 340 - margin.top - margin.bottom;
 
 
         let svg = d3.select('svg')
