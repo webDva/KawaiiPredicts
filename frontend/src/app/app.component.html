@@ -1,15 +1,17 @@
 <table>
-    <tr (click)="generateData()">
+    <tr>
         <th></th>
         <th>X</th>
         <th>Y</th>
     </tr>
     <tr *ngFor="let d of dataPairs; let i = index;">
         <td>{{i + 1}}</td>
-        <td><input #number type="number" (input)="dataPairs[i][0] = number.value" [value]="dataPairs[i][0]"/></td>
-        <td><input #number type="number" (input)="dataPairs[i][1] = number.value" [value]="dataPairs[i][1]"/></td>
+        <td><input #number1 type="number" (input)="dataPairs[i][0] = number1.value" [value]="dataPairs[i][0]"/></td>
+        <td><input #number2 type="number" (input)="dataPairs[i][1] = number2.value" [value]="dataPairs[i][1]"/></td>
     </tr>
 </table>
-<h1 (click)="getRegression(dataPairs)">
+<button (click)="generateData()">generate data</button>
+<button (click)="getRegression(dataPairs)">regression</button>
+<h1>
   {{results | json}}
 </h1>
