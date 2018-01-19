@@ -1,6 +1,6 @@
 // ng build --prod --aot=false
 
-import {Component, ElementRef, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
 
@@ -8,7 +8,6 @@ import * as d3 from 'd3';
 
 @Component({
     selector: 'app-root',
-    encapsulation: ViewEncapsulation.None,
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
@@ -28,7 +27,7 @@ export class AppComponent implements OnInit {
         }
         this.http.post(this.baseUrl + '/regression', {"dataset": dataset}).subscribe(data => {
             this.results = data;
-            this.chart();
+            this.chart(data['slope'], data['y_intercept']);
         },
             err => {
 
@@ -50,13 +49,14 @@ export class AppComponent implements OnInit {
         for (let i = 0; i < 10; i++) {
             this.dataPairs.push([this.randomFloatBetween(-100, 100, null), this.randomFloatBetween(-100, 100, null)]);
         }
+
+        this.chart();
     }
 
-    chart() {
+    chart(slope?: number, yIntercept?: number) {
         let margin = {top: 20, right: 15, bottom: 20, left: 60};
         let width = 340 - margin.left - margin.right;
         let height = 340 - margin.top - margin.bottom;
-
 
         let svg = d3.select('svg')
             .attr('width', width + margin.left + margin.right)
@@ -92,9 +92,23 @@ export class AppComponent implements OnInit {
             .attr("cy", function (d) {return y(d[1]);})
             .attr("r", "8px")
             .attr("fill", "red");
+
+        if (slope && yIntercept) {
+            // extend the length of the line
+            let A = [0, yIntercept], B = [100, slope * 100 + yIntercept];
+            let newSlope = (B[1] - A[1]) / (B[0] - A[0]);
+            let newY = A[1] + (-100 - A[0]) * newSlope;
+
+            svg.append('line')
+                .style("stroke", "black")
+                .attr("x1", x(-100))
+                .attr("y1", y(newY))
+                .attr("x2", x(100))
+                .attr("y2", y(slope * 100 + yIntercept))
+        }
     }
 
-    constructor(private http: HttpClient, private element: ElementRef) {}
+    constructor(private http: HttpClient) {}
 
     ngOnInit() {
         if (!environment.production) {

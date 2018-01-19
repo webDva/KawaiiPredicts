@@ -11,13 +11,13 @@
             <td><input #number2 type="number" (input)="dataPairs[i][1] = number2.value; chart();" [value]="dataPairs[i][1]"/></td>
         </tr>
     </table>
+    
+    <div class="buttons-container">
+        <button (click)="generateData()">generate data</button>
+        <button (click)="getRegression(dataPairs)">regression</button>
+    </div>    
 </div>
 
 <div class="chart-container row">
     <svg class="d3-chart"></svg>
-</div>
-
-<div class="buttons-container">
-    <button (click)="generateData()">generate data</button>
-    <button (click)="getRegression(dataPairs)">regression</button>
 </div>
