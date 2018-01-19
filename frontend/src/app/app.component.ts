@@ -14,11 +14,6 @@ import * as d3 from 'd3';
 export class AppComponent implements OnInit {
 
     baseUrl = '';
-
-    //dset = {"dataset": [[5, 3], [10, 17], [15, 4], [20, 6]]};
-    results = {};
-
-    numPairs = 1;
     dataPairs: Array<number[]>;
 
     getRegression(dataset: Array<number[]>) {
@@ -26,7 +21,6 @@ export class AppComponent implements OnInit {
             dataset[i] = dataset[i].map(Number); // string to number
         }
         this.http.post(this.baseUrl + '/regression', {"dataset": dataset}).subscribe(data => {
-            this.results = data;
             this.chart(data['slope'], data['y_intercept']);
         },
             err => {
@@ -100,11 +94,12 @@ export class AppComponent implements OnInit {
             let newY = A[1] + (-100 - A[0]) * newSlope;
 
             svg.append('line')
-                .style("stroke", "black")
+                .style("stroke", "blue")
+                .style("stroke-width", 4)
                 .attr("x1", x(-100))
                 .attr("y1", y(newY))
                 .attr("x2", x(100))
-                .attr("y2", y(slope * 100 + yIntercept))
+                .attr("y2", y(slope * 100 + yIntercept));
         }
     }
 
