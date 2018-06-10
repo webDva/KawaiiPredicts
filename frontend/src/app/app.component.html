@@ -7,13 +7,12 @@
         </tr>
         <tr *ngFor="let d of dataPairs; let i = index;">
             <td>{{i + 1}}</td>
-            <td><input #number1 type="number" (input)="dataPairs[i][0] = number1.value; chart();" [value]="dataPairs[i][0]"/></td>
-            <td><input #number2 type="number" (input)="dataPairs[i][1] = number2.value; chart();" [value]="dataPairs[i][1]"/></td>
+            <td><input #number1 type="number" (input)="dataPairs[i][0] = number1.value;" [value]="dataPairs[i][0]"/></td>
+            <td><input #number2 type="number" (input)="dataPairs[i][1] = number2.value;" [value]="dataPairs[i][1]"/></td>
         </tr>
     </table>
     
     <div class="buttons-container">
-        <button (click)="generateData()">generate random dataset</button>
         <button (click)="getRegression(dataPairs)">perform linear regression</button>
     </div>    
 </div>

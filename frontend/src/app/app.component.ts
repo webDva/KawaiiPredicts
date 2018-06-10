@@ -1,8 +1,8 @@
 // ng build --prod --aot=false
 
-import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../environments/environment';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 import * as d3 from 'd3';
 
@@ -15,12 +15,17 @@ export class AppComponent implements OnInit {
 
     baseUrl = '';
     dataPairs: Array<number[]>;
+    cleanedData: Array<number[]> = [];
 
     getRegression(dataset: Array<number[]>) {
+        this.cleanedData = [];
         for (let i = 0; i < dataset.length; i++) {
-            dataset[i] = dataset[i].map(Number); // string to number
+            if (!(isNaN(dataset[i][0]) && isNaN(dataset[i][1]))) {
+                this.cleanedData.push(dataset[i].map(Number)); // string to number
+            }
         }
-        this.http.post(this.baseUrl + '/regression', {"dataset": dataset}).subscribe(data => {
+
+        this.http.post(this.baseUrl + '/regression', { "dataset": this.cleanedData }).subscribe(data => {
             this.chart(data['slope'], data['y_intercept']);
         },
             err => {
@@ -28,27 +33,8 @@ export class AppComponent implements OnInit {
             });
     }
 
-    // Random float between
-    randomFloatBetween(minValue, maxValue, precision) {
-        if (typeof (precision) == 'undefined') {
-            precision = 2;
-        }
-        return parseFloat(Math.min(minValue + (Math.random() * (maxValue - minValue)), maxValue).toFixed(precision));
-    }
-
-    // generate random dataset values
-    generateData() {
-        this.dataPairs = [];
-
-        for (let i = 0; i < 10; i++) {
-            this.dataPairs.push([this.randomFloatBetween(-100, 100, null), this.randomFloatBetween(-100, 100, null)]);
-        }
-
-        this.chart();
-    }
-
     chart(slope?: number, yIntercept?: number) {
-        let margin = {top: 20, right: 15, bottom: 20, left: 60};
+        let margin = { top: 20, right: 15, bottom: 20, left: 60 };
         let width = 340 - margin.left - margin.right;
         let height = 340 - margin.top - margin.bottom;
 
@@ -80,10 +66,10 @@ export class AppComponent implements OnInit {
             .call(d3.axisLeft(y));
 
         svg.selectAll("circle")
-            .data(this.dataPairs)
+            .data(this.cleanedData)
             .enter().append("circle")
-            .attr("cx", function (d) {return x(d[0]);})
-            .attr("cy", function (d) {return y(d[1]);})
+            .attr("cx", function (d) { return x(d[0]); })
+            .attr("cy", function (d) { return y(d[1]); })
             .attr("r", "8px")
             .attr("fill", "red");
 
@@ -103,13 +89,16 @@ export class AppComponent implements OnInit {
         }
     }
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
     ngOnInit() {
         if (!environment.production) {
             this.baseUrl = 'http://localhost:3000';
         }
 
-        this.generateData();
+        this.dataPairs = [];
+        for (let i = 0; i < 20; i++) {
+            this.dataPairs.push([NaN, NaN]);
+        }
     }
 }
